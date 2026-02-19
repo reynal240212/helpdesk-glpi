@@ -6,11 +6,12 @@ import com.tuempresa.helpdesk.model.Ticket;
 import com.tuempresa.helpdesk.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,7 @@ public class TicketService {
     t.setRequester(blankToNull(dto.getRequester()));
     t.setAssignee(blankToNull(dto.getAssignee()));
 
-    LocalDateTime now = LocalDateTime.now();
+    OffsetDateTime now = OffsetDateTime.now();
     t.setCreatedAt(now);
     t.setUpdatedAt(now);
     t.setStatus(Ticket.Status.NEW);
@@ -58,11 +59,11 @@ public class TicketService {
     return repo.findAll().stream().map(TicketDTO::from).collect(Collectors.toList());
   }
 
-  public TicketDTO findById(Long id) {
+  public TicketDTO findById(UUID id) {
     return repo.findById(id).map(TicketDTO::from).orElse(null);
   }
 
-  public TicketDTO updateStatus(Long id, Ticket.Status nextStatus) {
+  public TicketDTO updateStatus(UUID id, Ticket.Status nextStatus) {
     Ticket t = repo.findById(id).orElse(null);
     if (t == null) return null;
 
@@ -75,7 +76,7 @@ public class TicketService {
     }
 
     t.setStatus(nextStatus);
-    t.setUpdatedAt(LocalDateTime.now());
+    t.setUpdatedAt(OffsetDateTime.now());
     return TicketDTO.from(repo.save(t));
   }
 

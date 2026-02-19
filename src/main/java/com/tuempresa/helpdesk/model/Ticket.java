@@ -3,8 +3,12 @@ package com.tuempresa.helpdesk.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tickets")
@@ -12,8 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Ticket {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue
+  @UuidGenerator
+  private UUID id;
 
   @Column(nullable = false, length = 200)
   private String title;
@@ -22,16 +27,25 @@ public class Ticket {
   private String description;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 20)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
+  @Column(nullable = false, columnDefinition = "ticket_status")
   private Status status = Status.NEW;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 20)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
+  @Column(nullable = false, columnDefinition = "ticket_priority")
   private Priority priority = Priority.MEDIUM;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 50)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
+  @Column(nullable = false, columnDefinition = "ticket_category")
   private Category category = Category.GENERAL_SUPPORT;
+
+  @Column(name = "requester_id")
+  private UUID requesterId;
+
+  @Column(name = "assignee_id")
+  private UUID assigneeId;
 
   @Column(length = 120)
   private String requester;
@@ -40,13 +54,14 @@ public class Ticket {
   private String assignee;
 
   @Column(nullable = false)
-  private LocalDateTime createdAt = LocalDateTime.now();
+  private OffsetDateTime createdAt = OffsetDateTime.now();
 
-  private LocalDateTime updatedAt;
+  @Column(nullable = false)
+  private OffsetDateTime updatedAt = OffsetDateTime.now();
 
-  private LocalDateTime firstResponseDueAt;
+  private OffsetDateTime firstResponseDueAt;
 
-  private LocalDateTime resolutionDueAt;
+  private OffsetDateTime resolutionDueAt;
 
   public enum Status {
     NEW,

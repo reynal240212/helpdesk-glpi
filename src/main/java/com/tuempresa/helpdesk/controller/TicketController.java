@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -32,13 +33,13 @@ public class TicketController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<TicketDTO> get(@PathVariable Long id) {
+  public ResponseEntity<TicketDTO> get(@PathVariable UUID id) {
     TicketDTO dto = service.findById(id);
     return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
   }
 
   @PatchMapping("/{id}/status")
-  public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam Ticket.Status status) {
+  public ResponseEntity<?> updateStatus(@PathVariable UUID id, @RequestParam Ticket.Status status) {
     try {
       TicketDTO dto = service.updateStatus(id, status);
       return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
