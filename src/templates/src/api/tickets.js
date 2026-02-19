@@ -1,25 +1,51 @@
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = '/api';
 
-export async function fetchTickets() {
-  const r = await fetch(`${API_BASE}/tickets`);
-  if (!r.ok) throw new Error('No se pudieron cargar tickets');
-  return r.json();
+async function request(url, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: controller.signal,
+    });
+
+    const isJson = res.headers.get('content-type')?.includes('application/json');
+    const body = isJson ? await res.json() : null;
+
+    if (!res.ok) {
+      const msg = body?.message || `Error HTTP ${res.status}`;
+      throw new Error(msg);
+    }
+
+    return body;
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Tiempo de espera agotado. Verifica conexión con el backend.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
-export async function createTicket(payload) {
-  const r = await fetch(`${API_BASE}/tickets`, {
+export function fetchTickets() {
+  return request(`${API_BASE}/tickets`, { method: 'GET' });
+}
+
+export function createTicket(payload) {
+  return request(`${API_BASE}/tickets`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!r.ok) throw new Error('No se pudo crear ticket');
-  return r.json();
 }
 
-export async function updateTicketStatus(id, status) {
-  const r = await fetch(`${API_BASE}/tickets/${id}/status?status=${status}`, {
+export function updateTicketStatus(id, status) {
+  return request(`${API_BASE}/tickets/${id}/status?status=${encodeURIComponent(status)}`, {
     method: 'PATCH',
   });
-  if (!r.ok) throw new Error('No se pudo actualizar el estado');
-  return r.json();
 }
