@@ -7,101 +7,112 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
-  async function load() {
+  // Carga inicial
+  const load = async () => {
     setError('');
     setLoading(true);
     try {
       const data = await fetchTickets();
       setTickets(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message || 'No se pudieron cargar tickets');
+      setError('Error al conectar con el servidor');
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleChangeStatus(id, nextStatus) {
+  useEffect(() => { load(); }, []);
+
+  // MEJORA: Actualización Optimista
+  const handleChangeStatus = async (id, nextStatus) => {
+    const originalTickets = [...tickets];
+
+    // 1. Actualizamos UI al instante
+    setTickets(prev => prev.map(t => t.id === id ? { ...t, status: nextStatus } : t));
+
     try {
       await updateTicketStatus(id, nextStatus);
-      await load();
     } catch (err) {
-      setError(err.message || 'No se pudo actualizar el estado');
+      // 2. Si falla, revertimos y notificamos
+      setTickets(originalTickets);
+      setError('No se pudo actualizar el ticket. Reintentando...');
+      setTimeout(() => setError(''), 3000); // Limpiar error tras 3s
     }
-  }
+  };
 
-  useEffect(() => {
-    load();
-  }, []);
-
+  // Filtrado y Estadísticas (Memorizados)
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const query = search.toLowerCase().trim();
     return tickets
-      .filter((t) => (status === 'ALL' ? true : t.status === status))
-      .filter((t) => {
-        if (!q) return true;
-        return `${t.title} ${t.description}`.toLowerCase().includes(q);
-      })
+      .filter(t => (statusFilter === 'ALL' ? true : t.status === statusFilter))
+      .filter(t => !query || `${t.title} ${t.description}`.toLowerCase().includes(query))
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  }, [tickets, search, status]);
+  }, [tickets, search, statusFilter]);
 
-  const stats = useMemo(() => ({
-    total: tickets.length,
-    open: tickets.filter((t) => t.status === 'NEW').length,
-    progress: tickets.filter((t) => t.status === 'IN_PROGRESS').length,
-    pending: tickets.filter((t) => t.status === 'PENDING').length,
-    resolved: tickets.filter((t) => t.status === 'RESOLVED').length,
-    closed: tickets.filter((t) => t.status === 'CLOSED').length,
-  }), [tickets]);
+  const stats = useMemo(() => {
+    const counts = { TOTAL: tickets.length, NEW: 0, IN_PROGRESS: 0, PENDING: 0, RESOLVED: 0, CLOSED: 0 };
+    tickets.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
+    return counts;
+  }, [tickets]);
 
   return (
     <div className="container">
       <header className="page-header">
-        <h1>Panel de Tickets</h1>
-        <button onClick={load} disabled={loading}>{loading ? 'Actualizando...' : 'Actualizar'}</button>
+        <div>
+          <h1>Panel de Tickets</h1>
+          <p className="text-muted">Gestiona las incidencias en tiempo real</p>
+        </div>
+        <button className="btn-refresh" onClick={load} disabled={loading}>
+          {loading ? 'Cargando...' : '🔄 Sincronizar'}
+        </button>
       </header>
 
+      {/* Grid de Estadísticas con mejor semántica */}
       <section className="stats-grid">
-        <div className="stat-card"><span>Total</span><strong>{stats.total}</strong></div>
-        <div className="stat-card"><span>Nuevos</span><strong>{stats.open}</strong></div>
-        <div className="stat-card"><span>En progreso</span><strong>{stats.progress}</strong></div>
-        <div className="stat-card"><span>Pendientes</span><strong>{stats.pending}</strong></div>
-        <div className="stat-card"><span>Resueltos</span><strong>{stats.resolved}</strong></div>
-        <div className="stat-card"><span>Cerrados</span><strong>{stats.closed}</strong></div>
+        {Object.entries(stats).map(([key, value]) => (
+          <div key={key} className={`stat-card ${statusFilter === key ? 'active' : ''}`} onClick={() => setStatusFilter(key)}>
+            <span>{key.replace('_', ' ')}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
       </section>
 
-      <section className="card filters">
-        <input
-          placeholder="Buscar por título o descripción..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="ALL">Todos</option>
+      <div className="toolbar">
+        <div className="search-box">
+          <input
+            type="search"
+            placeholder="Buscar por título o descripción..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="ALL">Todos los estados</option>
           <option value="NEW">Nuevos</option>
           <option value="IN_PROGRESS">En progreso</option>
           <option value="PENDING">Pendientes</option>
           <option value="RESOLVED">Resueltos</option>
           <option value="CLOSED">Cerrados</option>
         </select>
-      </section>
+      </div>
 
-      {error && <p className="alert error">{error}</p>}
-      {loading && <p className="hint">Cargando tickets...</p>}
+      {error && <div className="alert error-toast">{error}</div>}
 
-      {!loading && filtered.length === 0 ? (
-        <div className="card empty-state">
-          <h3>No hay tickets para mostrar</h3>
-          <p>Crea un ticket nuevo o ajusta los filtros.</p>
-        </div>
-      ) : null}
-
-      <section className="grid">
-        {filtered.map((t) => (
-          <TicketCard key={t.id} ticket={t} onChangeStatus={handleChangeStatus} />
-        ))}
-      </section>
+      <main className="grid">
+        {loading && tickets.length === 0 ? (
+          <p>Cargando panel...</p>
+        ) : filtered.length === 0 ? (
+          <div className="empty-state">
+            <p>No se encontraron resultados para tu búsqueda.</p>
+          </div>
+        ) : (
+          filtered.map(t => (
+            <TicketCard key={t.id} ticket={t} onChangeStatus={handleChangeStatus} />
+          ))
+        )}
+      </main>
     </div>
   );
 }
