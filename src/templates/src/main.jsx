@@ -1,10 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import CreateTicket from './pages/CreateTicket';
 import Login from './pages/Login';
 import UsersAdmin from './pages/UsersAdmin';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import { clearAuth, getAuth } from './api/auth';
 import './styles/globals.css';
 
@@ -14,19 +16,16 @@ function PrivateRoute({ children }) {
 
 function Shell({ children }) {
   const auth = getAuth();
+  const handleLogout = async () => {
+    await clearAuth();
+    window.location.href = '#/login';
+  };
+
   return (
     <>
-      <div className="container">
-        <nav className="nav">
-          <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>Panel</NavLink>
-          <NavLink to="/create" className={({ isActive }) => (isActive ? 'active' : '')}>Crear ticket</NavLink>
-          {auth?.role === 'SUPERADMIN' && (
-            <NavLink to="/users" className={({ isActive }) => (isActive ? 'active' : '')}>Usuarios</NavLink>
-          )}
-          <button onClick={() => { clearAuth(); window.location.href = '#/login'; }}>Salir</button>
-        </nav>
-      </div>
-      {children}
+      <Navbar role={auth?.role} onLogout={handleLogout} />
+      <main>{children}</main>
+      <Footer />
     </>
   );
 }
