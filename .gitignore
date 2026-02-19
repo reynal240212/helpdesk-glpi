@@ -1,0 +1,14 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Maven/Java
+/target/
+
+# Node frontend
+src/templates/node_modules/
+src/templates/dist/
+
+# OS
+.DS_Store
+Thumbs.db
