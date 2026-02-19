@@ -22,11 +22,11 @@ function Shell({ children }) {
   };
 
   return (
-    <>
-      <Navbar role={auth?.role} onLogout={handleLogout} />
-      <main>{children}</main>
+    <div className="app-shell">
+      <Navbar role={auth?.role} fullName={auth?.fullName} onLogout={handleLogout} />
+      <main className="app-main">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 }
 
