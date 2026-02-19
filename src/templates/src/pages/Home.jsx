@@ -48,8 +48,10 @@ export default function Home() {
 
   const stats = useMemo(() => ({
     total: tickets.length,
-    open: tickets.filter((t) => t.status === 'OPEN').length,
+    open: tickets.filter((t) => t.status === 'NEW').length,
     progress: tickets.filter((t) => t.status === 'IN_PROGRESS').length,
+    pending: tickets.filter((t) => t.status === 'PENDING').length,
+    resolved: tickets.filter((t) => t.status === 'RESOLVED').length,
     closed: tickets.filter((t) => t.status === 'CLOSED').length,
   }), [tickets]);
 
@@ -62,8 +64,10 @@ export default function Home() {
 
       <section className="stats-grid">
         <div className="stat-card"><span>Total</span><strong>{stats.total}</strong></div>
-        <div className="stat-card"><span>Abiertos</span><strong>{stats.open}</strong></div>
+        <div className="stat-card"><span>Nuevos</span><strong>{stats.open}</strong></div>
         <div className="stat-card"><span>En progreso</span><strong>{stats.progress}</strong></div>
+        <div className="stat-card"><span>Pendientes</span><strong>{stats.pending}</strong></div>
+        <div className="stat-card"><span>Resueltos</span><strong>{stats.resolved}</strong></div>
         <div className="stat-card"><span>Cerrados</span><strong>{stats.closed}</strong></div>
       </section>
 
@@ -75,8 +79,10 @@ export default function Home() {
         />
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="ALL">Todos</option>
-          <option value="OPEN">Abiertos</option>
+          <option value="NEW">Nuevos</option>
           <option value="IN_PROGRESS">En progreso</option>
+          <option value="PENDING">Pendientes</option>
+          <option value="RESOLVED">Resueltos</option>
           <option value="CLOSED">Cerrados</option>
         </select>
       </section>

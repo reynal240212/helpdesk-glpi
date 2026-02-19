@@ -1,8 +1,10 @@
 import React from 'react';
 
 const LABELS = {
-  OPEN: 'Abierto',
+  NEW: 'Nuevo',
   IN_PROGRESS: 'En progreso',
+  PENDING: 'Pendiente',
+  RESOLVED: 'Resuelto',
   CLOSED: 'Cerrado',
 };
 

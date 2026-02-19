@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import StatusBadge from './StatusBadge';
 
-const STATUS_OPTIONS = ['OPEN', 'IN_PROGRESS', 'CLOSED'];
+const STATUS_OPTIONS = ['NEW', 'IN_PROGRESS', 'PENDING', 'RESOLVED', 'CLOSED'];
 
 export default function TicketCard({ ticket, onChangeStatus }) {
   const [saving, setSaving] = useState(false);
@@ -25,8 +25,16 @@ export default function TicketCard({ ticket, onChangeStatus }) {
 
       <p className="ticket-description">{ticket.description}</p>
 
+      <div className="row meta-wrap">
+        <small className="hint"><strong>Prioridad:</strong> {ticket.priority || 'MEDIUM'}</small>
+        <small className="hint"><strong>Categoría:</strong> {ticket.category || 'GENERAL_SUPPORT'}</small>
+        <small className="hint"><strong>Solicitante:</strong> {ticket.requester || 'N/A'}</small>
+        <small className="hint"><strong>Asignado:</strong> {ticket.assignee || 'Sin asignar'}</small>
+      </div>
+
       <div className="row between">
         <small className="hint">Creado: {new Date(ticket.createdAt).toLocaleString()}</small>
+        <small className="hint">SLA Resolución: {ticket.resolutionDueAt ? new Date(ticket.resolutionDueAt).toLocaleString() : 'N/A'}</small>
         <div className="row">
           <select
             value={ticket.status}

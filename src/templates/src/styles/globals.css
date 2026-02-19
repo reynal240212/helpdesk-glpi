@@ -104,6 +104,18 @@ h1, h2, h3 { margin: 0; }
   flex-wrap: wrap;
 }
 
+.row.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.meta-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 6px 10px;
+}
+
 .row.between { justify-content: space-between; }
 
 button, .link-btn {
@@ -150,8 +162,10 @@ label { color: #cbd5e1; font-size: 14px; }
   color: white;
 }
 
-.badge-OPEN { background: #16a34a; }
+.badge-NEW { background: #2563eb; }
 .badge-IN_PROGRESS { background: #f59e0b; }
+.badge-PENDING { background: #a855f7; }
+.badge-RESOLVED { background: #16a34a; }
 .badge-CLOSED { background: #64748b; }
 
 .empty-state { text-align: center; }
