@@ -5,7 +5,7 @@ export default function UsersAdmin() {
   const auth = getAuth();
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ username: '', fullName: '', password: '', role: 'USER' });
+  const [form, setForm] = useState({ email: '', fullName: '', password: '', role: 'USER' });
 
   async function load() {
     try {
@@ -22,7 +22,7 @@ export default function UsersAdmin() {
     e.preventDefault();
     try {
       await createUser(form);
-      setForm({ username: '', fullName: '', password: '', role: 'USER' });
+      setForm({ email: '', fullName: '', password: '', role: 'USER' });
       await load();
     } catch (err) {
       setError(err.message);
@@ -38,7 +38,7 @@ export default function UsersAdmin() {
       <h1>Gestión de usuarios</h1>
       <form className="card" onSubmit={onSubmit}>
         <div className="row two-cols">
-          <div><label>Usuario</label><input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /></div>
+          <div><label>Email</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
           <div><label>Nombre</label><input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} /></div>
         </div>
         <div className="row two-cols">
@@ -63,8 +63,8 @@ export default function UsersAdmin() {
         <div className="grid">
           {users.map(u => (
             <div className="card" key={u.id}>
-              <strong>{u.username}</strong>
-              <p>{u.fullName}</p>
+              <strong>{u.fullName}</strong>
+              <p>{u.id}</p>
               <span className="badge">{u.role}</span>
             </div>
           ))}

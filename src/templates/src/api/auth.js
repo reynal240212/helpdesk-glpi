@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 const API_BASE = '/api';
 
 export function getAuth() {
@@ -13,22 +15,35 @@ export function saveAuth(data) {
   localStorage.setItem('helpdesk_auth', JSON.stringify(data));
 }
 
-export function clearAuth() {
+export async function clearAuth() {
   localStorage.removeItem('helpdesk_auth');
+  await supabase.auth.signOut();
 }
 
-export async function login(username, password) {
-  const res = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+export async function login(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data.session?.access_token) {
+    throw new Error(error?.message || 'Login inválido');
+  }
+
+  const token = data.session.access_token;
+  const me = await fetch(`${API_BASE}/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  }).then(async (r) => {
+    const b = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(b.message || 'No se pudo obtener perfil');
+    return b;
   });
 
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.message || 'Login inválido');
-
-  saveAuth(body);
-  return body;
+  const auth = {
+    token,
+    userId: data.user.id,
+    email: data.user.email,
+    role: me.role,
+    fullName: me.fullName,
+  };
+  saveAuth(auth);
+  return auth;
 }
 
 export async function fetchUsers() {

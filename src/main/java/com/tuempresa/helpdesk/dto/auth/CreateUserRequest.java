@@ -1,6 +1,7 @@
 package com.tuempresa.helpdesk.dto.auth;
 
-import com.tuempresa.helpdesk.model.UserAccount;
+import com.tuempresa.helpdesk.model.Profile;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -8,8 +9,8 @@ import lombok.Data;
 @Data
 public class CreateUserRequest {
   @NotBlank
-  @Size(max = 80)
-  private String username;
+  @Email
+  private String email;
 
   @NotBlank
   @Size(max = 120)
@@ -19,5 +20,5 @@ public class CreateUserRequest {
   @Size(min = 6, max = 120)
   private String password;
 
-  private UserAccount.Role role = UserAccount.Role.USER;
+  private Profile.Role role = Profile.Role.USER;
 }
