@@ -1,3 +1,5 @@
+import { getToken } from './auth';
+
 const API_BASE = '/api';
 
 async function request(url, options = {}) {
@@ -5,10 +7,12 @@ async function request(url, options = {}) {
   const timeout = setTimeout(() => controller.abort(), 12000);
 
   try {
+    const token = getToken();
     const res = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.headers || {}),
       },
       signal: controller.signal,
