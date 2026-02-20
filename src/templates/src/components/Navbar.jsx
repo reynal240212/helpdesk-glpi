@@ -4,6 +4,8 @@ import { NavLink } from 'react-router-dom';
 const menu = [
   { to: '/', label: 'Dashboard' },
   { to: '/create', label: 'Crear ticket' },
+  { to: '/computers', label: 'Inventario equipos' },
+  { to: '/computers/create', label: 'Registrar equipo' },
 ];
 
 export default function Navbar({ role, fullName, onLogout }) {
@@ -12,15 +14,24 @@ export default function Navbar({ role, fullName, onLogout }) {
       <aside className="sidebar">
         <div className="sidebar-logo">GLPI</div>
         <div className="sidebar-section">Find menu</div>
+
         <nav className="sidebar-menu">
           {menu.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.to === '/'} className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}>
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}
+            >
               {item.label}
             </NavLink>
           ))}
 
           {role === 'SUPERADMIN' && (
-            <NavLink to="/users" className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}>
+            <NavLink
+              to="/users"
+              className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}
+            >
               Usuarios
             </NavLink>
           )}
@@ -28,9 +39,9 @@ export default function Navbar({ role, fullName, onLogout }) {
       </aside>
 
       <header className="topbar-glpi">
-        <div className="topbar-left">Home</div>
+        <div className="topbar-left">Inventario</div>
         <div className="topbar-right">
-          <input className="topbar-search" placeholder="Search..." />
+          <input className="topbar-search" placeholder="Buscar equipo..." />
           <div className="user-chip">{(fullName || 'AD').slice(0, 2).toUpperCase()}</div>
           <button className="btn-logout" onClick={onLogout}>Salir</button>
         </div>

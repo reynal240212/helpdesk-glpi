@@ -24,16 +24,49 @@ export default function Login() {
   }
 
   return (
-    <div className="container" style={{ maxWidth: 420 }}>
-      <form className="card" onSubmit={onSubmit}>
-        <h2>Iniciar sesión</h2>
-        <label>Email</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <label>Contraseña</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type="submit" disabled={loading}>{loading ? 'Ingresando...' : 'Ingresar'}</button>
-        {error && <p className="alert error">{error}</p>}
-      </form>
-    </div>
+    <section className="login-page">
+      <div className="login-overlay" />
+
+      <div className="login-shell">
+        <aside className="login-brand-panel card">
+          <h1>Helpdesk GLPI</h1>
+          <p>Plataforma de soporte técnico, gestión de tickets y administración de usuarios.</p>
+          <ul>
+            <li>✔ Seguimiento de SLA</li>
+            <li>✔ Control de estados y prioridades</li>
+            <li>✔ Seguridad con Supabase Auth</li>
+          </ul>
+        </aside>
+
+        <form className="card login-card" onSubmit={onSubmit}>
+          <h2>Iniciar sesión</h2>
+          <p className="text-muted">Accede con tu cuenta de Supabase</p>
+
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="tu-correo@empresa.com"
+            required
+          />
+
+          <label>Contraseña</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+          />
+
+          <button type="submit" disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar'}
+          </button>
+
+          {error && <p className="alert error">{error}</p>}
+        </form>
+      </div>
+    </section>
   );
 }

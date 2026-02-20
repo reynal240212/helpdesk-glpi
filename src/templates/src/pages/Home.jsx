@@ -67,8 +67,8 @@ export default function Home() {
     <div className="container">
       <header className="page-header">
         <div>
-          <h1>Panel de Tickets</h1>
-          <p className="text-muted">Monitorea estado, SLA y carga operativa en tiempo real.</p>
+          <h1>🏠 Home · Panel de Tickets</h1>
+          <p className="text-muted">Vista principal del sistema Helpdesk.</p>
         </div>
         <button className="btn-refresh" onClick={load} disabled={loading}>
           {loading ? 'Sincronizando...' : 'Sincronizar'}
