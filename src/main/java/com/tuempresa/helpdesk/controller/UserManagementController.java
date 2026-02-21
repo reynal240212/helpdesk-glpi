@@ -34,9 +34,11 @@ public class UserManagementController {
     }
     try {
       UUID id = UUID.fromString(jwt.getSubject());
-      return profileRepo.findById(id)
-          .map(p -> ResponseEntity.ok(UserDTO.from(p)))
-          .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Perfil no encontrado")));
+      var profileOpt = profileRepo.findById(id);
+      if (profileOpt.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Perfil no encontrado"));
+      }
+      return ResponseEntity.ok(UserDTO.from(profileOpt.get()));
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(Map.of("message", "Token inválido"));
     }

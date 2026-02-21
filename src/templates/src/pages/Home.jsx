@@ -64,7 +64,7 @@ export default function Home() {
   }, [tickets, search, statusFilter]);
 
   return (
-    <div className="container">
+    <div className="container mx-auto px-4 py-8">
       <header className="page-header">
         <div>
           <h1>🏠 Home · Panel de Tickets</h1>
