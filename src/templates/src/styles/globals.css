@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Borra o comenta cualquier estilo que diga .login-page, .card, etc. */

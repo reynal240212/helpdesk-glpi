@@ -12,12 +12,6 @@ export default function Login() {
   async function onSubmit(e) {
     e.preventDefault();
     setError('');
-
-    if (!email || !password) {
-      setError('Debes completar todos los campos.');
-      return;
-    }
-
     try {
       setLoading(true);
       const data = await login(email, password);
@@ -29,73 +23,51 @@ export default function Login() {
       setLoading(false);
     }
   }
-
+    console.log("¡ESTOY EN EL LOGIN CORRECTO!");
   return (
-    // Contenedor principal con degradado azul celeste
-    <section className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#E0FFFF] to-white p-4 md:p-8">
+    // Usamos !bg-slate-950 para forzar el color de fondo sobre el global
+    <div className="!fixed !inset-0 !m-0 !p-0 !w-full !h-full !flex !items-center !justify-center !bg-[#0f172a] !z-[9999]">
 
-      {/* Shell del Login (Contenedor de dos paneles) */}
-      <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden min-h-[550px]">
+      <div className="flex flex-col md:flex-row w-full max-w-4xl mx-4 bg-[#1e293b] rounded-2xl shadow-2xl overflow-hidden border border-slate-800">
 
-        {/* Panel de Marca (Izquierdo) - Se oculta en móviles muy pequeños o se apila */}
-        <aside className="hidden md:flex md:w-1/2 bg-[#F9FAFB] p-12 flex-col justify-center border-r border-gray-100">
-          <div className="space-y-6">
-            <h1 className="text-4xl font-bold text-gray-800 tracking-tight">
-              Helpdesk <span className="text-blue-400">GLPI</span>
-            </h1>
-            <p className="text-[#6B7280] text-lg leading-relaxed">
-              Gestión moderna de soporte, inventario y usuarios en un solo lugar.
-            </p>
-            <ul className="space-y-4 pt-4">
-              <li className="flex items-center text-gray-700">
-                <span className="bg-[#E0FFFF] text-blue-600 p-1 rounded-full mr-3 text-xs">✔</span>
-                Seguimiento de SLA
-              </li>
-              <li className="flex items-center text-gray-700">
-                <span className="bg-[#E0FFFF] text-blue-600 p-1 rounded-full mr-3 text-xs">✔</span>
-                Inventario de equipos
-              </li>
-              <li className="flex items-center text-gray-700">
-                <span className="bg-[#E0FFFF] text-blue-600 p-1 rounded-full mr-3 text-xs">✔</span>
-                Seguridad con Supabase Auth
-              </li>
-            </ul>
-          </div>
-        </aside>
+        {/* PANEL IZQUIERDO: TEXTO (Se oculta en móvil para parecerse más a la foto) */}
+        <div className="hidden md:flex md:w-1/2 p-12 flex-col justify-center bg-[#0f172a]/50">
+          <h1 className="text-3xl font-bold text-white mb-4 !border-none">PRUEBA</h1>
+          <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+            Plataforma de soporte técnico, gestión de tickets y administración de usuarios.
+          </p>
+          <ul className="space-y-3 text-sm text-slate-300">
+            <li className="flex items-center">✔ Seguimiento de SLA</li>
+            <li className="flex items-center">✔ Control de estados y prioridades</li>
+            <li className="flex items-center">✔ Seguridad con Supabase Auth</li>
+          </ul>
+        </div>
 
-        {/* Formulario de Inicio de Sesión (Derecho) */}
-        <form
-          className="flex-1 p-8 md:p-12 flex flex-col justify-center bg-white"
-          onSubmit={onSubmit}
-        >
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">Iniciar sesión</h2>
-            <p className="text-[#6B7280] mt-2">Accede con tu cuenta corporativa</p>
+        {/* PANEL DERECHO: FORMULARIO BLANCO */}
+        <div className="flex-1 bg-white p-10 flex flex-col justify-center">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-slate-900 !m-0">Iniciar sesión</h2>
+            <p className="text-slate-500 text-sm mt-1">Accede con tu cuenta de Supabase</p>
           </div>
 
-          <div className="space-y-5">
+          <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-[#6B7280] mb-2">
-                Email
-              </label>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Email</label>
               <input
                 type="email"
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-[#F9FAFB] focus:ring-2 focus:ring-[#E0FFFF] focus:border-blue-300 outline-none transition-all"
+                className="w-full px-4 py-2 rounded border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 bg-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu-correo@empresa.com"
-                autoFocus
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-[#6B7280] mb-2">
-                Contraseña
-              </label>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
               <input
                 type="password"
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-[#F9FAFB] focus:ring-2 focus:ring-[#E0FFFF] focus:border-blue-300 outline-none transition-all"
+                className="w-full px-4 py-2 rounded border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 bg-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -106,20 +78,19 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-[#E0FFFF] hover:bg-[#FDE68A] text-blue-900 font-bold rounded-lg transition-colors duration-300 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+              className="!w-fit !bg-indigo-600 hover:!bg-indigo-700 text-white px-8 py-2 rounded font-medium transition-all shadow-lg active:scale-95 disabled:opacity-50"
             >
               {loading ? 'Ingresando...' : 'Ingresar'}
             </button>
-          </div>
+          </form>
 
-          {/* Manejo de Errores con el color de acento rojo claro */}
           {error && (
-            <div className="mt-6 p-3 bg-[#FCA5A5] bg-opacity-30 border border-[#FCA5A5] text-red-800 text-sm rounded-lg text-center animate-pulse">
+            <div className="mt-4 p-2 bg-red-50 border border-red-200 text-red-600 text-xs rounded text-center">
               {error}
             </div>
           )}
-        </form>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
